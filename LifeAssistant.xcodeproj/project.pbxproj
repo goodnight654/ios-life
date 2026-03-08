@@ -1,0 +1,614 @@
+// !$*UTF8*$!
+{
+    archiveVersion = 1;
+    classes = {
+    };
+    objectVersion = 56;
+    objects = {
+
+/* Begin PBXBuildFile section */
+        /* App */
+        000000010000000000000001 /* LifeAssistantApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000100000000000000F1 /* LifeAssistantApp.swift */; };
+        000000010000000000000002 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000100000000000000F2 /* PersistenceController.swift */; };
+        
+        /* Models */
+        000000020000000000000001 /* AccountRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000200000000000000F1 /* AccountRecord.swift */; };
+        000000020000000000000002 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000200000000000000F2 /* TodoItem.swift */; };
+        000000020000000000000003 /* Interview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000200000000000000F3 /* Interview.swift */; };
+        000000020000000000000004 /* Conference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000200000000000000F4 /* Conference.swift */; };
+        
+        /* Views */
+        000000030000000000000001 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000300000000000000F1 /* ContentView.swift */; };
+        000000030000000000000002 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000300000000000000F2 /* AccountView.swift */; };
+        000000030000000000000003 /* TodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000300000000000000F3 /* TodoView.swift */; };
+        000000030000000000000004 /* AIRecognitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000300000000000000F4 /* AIRecognitionView.swift */; };
+        000000030000000000000005 /* InterviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000300000000000000F5 /* InterviewView.swift */; };
+        000000030000000000000006 /* ConferenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000300000000000000F6 /* ConferenceView.swift */; };
+        
+        /* Components */
+        000000040000000000000001 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000400000000000000F1 /* ProgressBar.swift */; };
+        000000040000000000000002 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000400000000000000F2 /* CardView.swift */; };
+        000000040000000000000003 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000400000000000000F3 /* EmptyStateView.swift */; };
+        
+        /* Services */
+        000000050000000000000001 /* AccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000500000000000000F1 /* AccountService.swift */; };
+        000000050000000000000002 /* TodoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000500000000000000F2 /* TodoService.swift */; };
+        000000050000000000000003 /* InterviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000500000000000000F3 /* InterviewService.swift */; };
+        000000050000000000000004 /* ConferenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000500000000000000F4 /* ConferenceService.swift */; };
+        000000050000000000000005 /* AIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000500000000000000F5 /* AIService.swift */; };
+        000000050000000000000006 /* EventKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000500000000000000F6 /* EventKitService.swift */; };
+        
+        /* Utils */
+        000000060000000000000001 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000600000000000000F1 /* NotificationManager.swift */; };
+        
+        /* Resources */
+        000000070000000000000001 /* LifeAssistant.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0000000700000000000000F1 /* LifeAssistant.xcdatamodeld */; };
+        000000070000000000000002 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0000000700000000000000F2 /* Assets.xcassets */; };
+        000000070000000000000003 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0000000700000000000000F3 /* Info.plist */; };
+        
+        /* Intents */
+        000000080000000000000001 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000800000000000000F1 /* IntentHandler.swift */; };
+        000000080000000000000002 /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 0000000800000000000000F2 /* Intents.intentdefinition */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+        000000000000000000000001 /* LifeAssistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeAssistant.app; sourceTree = BUILT_PRODUCTS_DIR; };
+        
+        /* App */
+        0000000100000000000000F1 /* LifeAssistantApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeAssistantApp.swift; sourceTree = "<group>"; };
+        0000000100000000000000F2 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+        
+        /* Models */
+        0000000200000000000000F1 /* AccountRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRecord.swift; sourceTree = "<group>"; };
+        0000000200000000000000F2 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
+        0000000200000000000000F3 /* Interview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interview.swift; sourceTree = "<group>"; };
+        0000000200000000000000F4 /* Conference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conference.swift; sourceTree = "<group>"; };
+        
+        /* Views */
+        0000000300000000000000F1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+        0000000300000000000000F2 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+        0000000300000000000000F3 /* TodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoView.swift; sourceTree = "<group>"; };
+        0000000300000000000000F4 /* AIRecognitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIRecognitionView.swift; sourceTree = "<group>"; };
+        0000000300000000000000F5 /* InterviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewView.swift; sourceTree = "<group>"; };
+        0000000300000000000000F6 /* ConferenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConferenceView.swift; sourceTree = "<group>"; };
+        
+        /* Components */
+        0000000400000000000000F1 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
+        0000000400000000000000F2 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+        0000000400000000000000F3 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+        
+        /* Services */
+        0000000500000000000000F1 /* AccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountService.swift; sourceTree = "<group>"; };
+        0000000500000000000000F2 /* TodoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoService.swift; sourceTree = "<group>"; };
+        0000000500000000000000F3 /* InterviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewService.swift; sourceTree = "<group>"; };
+        0000000500000000000000F4 /* ConferenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConferenceService.swift; sourceTree = "<group>"; };
+        0000000500000000000000F5 /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
+        0000000500000000000000F6 /* EventKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventKitService.swift; sourceTree = "<group>"; };
+        
+        /* Utils */
+        0000000600000000000000F1 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+        
+        /* Resources */
+        0000000700000000000000F1 /* LifeAssistant.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = LifeAssistant.xcdatamodeld; sourceTree = "<group>"; };
+        0000000700000000000000F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+        0000000700000000000000F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+        
+        /* Intents */
+        0000000800000000000000F1 /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
+        0000000800000000000000F2 /* Intents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = Intents.intentdefinition; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+        000000000000000000000002 /* Frameworks */ = {
+            isa = PBXFrameworksBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+        000000000000000000000000 = {
+            isa = PBXGroup;
+            children = (
+                000000010000000000000000 /* App */,
+                000000020000000000000000 /* Models */,
+                000000030000000000000000 /* Views */,
+                000000050000000000000000 /* Services */,
+                000000060000000000000000 /* Utils */,
+                000000070000000000000000 /* Resources */,
+                000000080000000000000000 /* Intents */,
+                000000000000000000000001 /* Products */,
+            );
+            sourceTree = "<group>";
+        };
+        
+        000000000000000000000001 /* Products */ = {
+            isa = PBXGroup;
+            children = (
+                000000000000000000000001 /* LifeAssistant.app */,
+            );
+            name = Products;
+            sourceTree = "<group>";
+        };
+        
+        /* App */
+        000000010000000000000000 = {
+            isa = PBXGroup;
+            children = (
+                0000000100000000000000F1 /* LifeAssistantApp.swift */,
+                0000000100000000000000F2 /* PersistenceController.swift */,
+            );
+            path = App;
+            sourceTree = "<group>";
+        };
+        
+        /* Models */
+        000000020000000000000000 = {
+            isa = PBXGroup;
+            children = (
+                0000000200000000000000F1 /* AccountRecord.swift */,
+                0000000200000000000000F2 /* TodoItem.swift */,
+                0000000200000000000000F3 /* Interview.swift */,
+                0000000200000000000000F4 /* Conference.swift */,
+            );
+            path = Models;
+            sourceTree = "<group>";
+        };
+        
+        /* Views */
+        000000030000000000000000 = {
+            isa = PBXGroup;
+            children = (
+                0000000300000000000000F1 /* ContentView.swift */,
+                000000030000000000000010 /* Account */,
+                000000030000000000000020 /* Todo */,
+                000000030000000000000030 /* AI */,
+                000000030000000000000040 /* Interview */,
+                000000030000000000000050 /* Conference */,
+                000000030000000000000060 /* Components */,
+            );
+            path = Views;
+            sourceTree = "<group>";
+        };
+        
+        000000030000000000000010 /* Account */ = {
+            isa = PBXGroup;
+            children = (
+                0000000300000000000000F2 /* AccountView.swift */,
+            );
+            path = Account;
+            sourceTree = "<group>";
+        };
+        
+        000000030000000000000020 /* Todo */ = {
+            isa = PBXGroup;
+            children = (
+                0000000300000000000000F3 /* TodoView.swift */,
+            );
+            path = Todo;
+            sourceTree = "<group>";
+        };
+        
+        000000030000000000000030 /* AI */ = {
+            isa = PBXGroup;
+            children = (
+                0000000300000000000000F4 /* AIRecognitionView.swift */,
+            );
+            path = AI;
+            sourceTree = "<group>";
+        };
+        
+        000000030000000000000040 /* Interview */ = {
+            isa = PBXGroup;
+            children = (
+                0000000300000000000000F5 /* InterviewView.swift */,
+            );
+            path = Interview;
+            sourceTree = "<group>";
+        };
+        
+        000000030000000000000050 /* Conference */ = {
+            isa = PBXGroup;
+            children = (
+                0000000300000000000000F6 /* ConferenceView.swift */,
+            );
+            path = Conference;
+            sourceTree = "<group>";
+        };
+        
+        000000030000000000000060 /* Components */ = {
+            isa = PBXGroup;
+            children = (
+                0000000400000000000000F1 /* ProgressBar.swift */,
+                0000000400000000000000F2 /* CardView.swift */,
+                0000000400000000000000F3 /* EmptyStateView.swift */,
+            );
+            path = Components;
+            sourceTree = "<group>";
+        };
+        
+        /* Services */
+        000000050000000000000000 = {
+            isa = PBXGroup;
+            children = (
+                0000000500000000000000F1 /* AccountService.swift */,
+                0000000500000000000000F2 /* TodoService.swift */,
+                0000000500000000000000F3 /* InterviewService.swift */,
+                0000000500000000000000F4 /* ConferenceService.swift */,
+                0000000500000000000000F5 /* AIService.swift */,
+                0000000500000000000000F6 /* EventKitService.swift */,
+            );
+            path = Services;
+            sourceTree = "<group>";
+        };
+        
+        /* Utils */
+        000000060000000000000000 = {
+            isa = PBXGroup;
+            children = (
+                0000000600000000000000F1 /* NotificationManager.swift */,
+            );
+            path = Utils;
+            sourceTree = "<group>";
+        };
+        
+        /* Resources */
+        000000070000000000000000 = {
+            isa = PBXGroup;
+            children = (
+                0000000700000000000000F1 /* LifeAssistant.xcdatamodeld */,
+                0000000700000000000000F2 /* Assets.xcassets */,
+                0000000700000000000000F3 /* Info.plist */,
+            );
+            path = Resources;
+            sourceTree = "<group>";
+        };
+        
+        /* Intents */
+        000000080000000000000000 = {
+            isa = PBXGroup;
+            children = (
+                0000000800000000000000F1 /* IntentHandler.swift */,
+                0000000800000000000000F2 /* Intents.intentdefinition */,
+            );
+            path = Intents;
+            sourceTree = "<group>";
+        };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+        000000000000000000000003 /* LifeAssistant */ = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = 000000000000000000000004 /* Build configuration list for PBXNativeTarget "LifeAssistant" */;
+            buildPhases = (
+                000000000000000000000005 /* Sources */,
+                000000000000000000000002 /* Frameworks */,
+                000000000000000000000006 /* Resources */,
+            );
+            buildRules = (
+            );
+            dependencies = (
+            );
+            name = LifeAssistant;
+            productName = LifeAssistant;
+            productReference = 000000000000000000000001 /* LifeAssistant.app */;
+            productType = "com.apple.product-type.application";
+        };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+        000000000000000000000007 /* Project object */ = {
+            isa = PBXProject;
+            attributes = {
+                BuildIndependentTargetsInParallel = 1;
+                LastSwiftUpdateCheck = 1500;
+                LastUpgradeCheck = 1500;
+                TargetAttributes = {
+                    000000000000000000000003 = {
+                        CreatedOnToolsVersion = 15.0;
+                    };
+                };
+            };
+            buildConfigurationList = 000000000000000000000008 /* Build configuration list for PBXProject "LifeAssistant" */;
+            compatibilityVersion = "Xcode 14.0";
+            developmentRegion = en;
+            hasScannedForEncodings = 0;
+            knownRegions = (
+                en,
+                Base,
+                "zh-Hans",
+            );
+            mainGroup = 000000000000000000000000;
+            productRefGroup = 000000000000000000000001 /* Products */;
+            projectDirPath = "";
+            projectRoot = "";
+            targets = (
+                000000000000000000000003 /* LifeAssistant */,
+            );
+        };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+        000000000000000000000006 /* Resources */ = {
+            isa = PBXResourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+                000000070000000000000002 /* Assets.xcassets in Resources */,
+                000000070000000000000003 /* Info.plist in Resources */,
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+        000000000000000000000005 /* Sources */ = {
+            isa = PBXSourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+                /* App */
+                000000010000000000000001 /* LifeAssistantApp.swift in Sources */,
+                000000010000000000000002 /* PersistenceController.swift in Sources */,
+                
+                /* Models */
+                000000020000000000000001 /* AccountRecord.swift in Sources */,
+                000000020000000000000002 /* TodoItem.swift in Sources */,
+                000000020000000000000003 /* Interview.swift in Sources */,
+                000000020000000000000004 /* Conference.swift in Sources */,
+                
+                /* Views */
+                000000030000000000000001 /* ContentView.swift in Sources */,
+                000000030000000000000002 /* AccountView.swift in Sources */,
+                000000030000000000000003 /* TodoView.swift in Sources */,
+                000000030000000000000004 /* AIRecognitionView.swift in Sources */,
+                000000030000000000000005 /* InterviewView.swift in Sources */,
+                000000030000000000000006 /* ConferenceView.swift in Sources */,
+                
+                /* Components */
+                000000040000000000000001 /* ProgressBar.swift in Sources */,
+                000000040000000000000002 /* CardView.swift in Sources */,
+                000000040000000000000003 /* EmptyStateView.swift in Sources */,
+                
+                /* Services */
+                000000050000000000000001 /* AccountService.swift in Sources */,
+                000000050000000000000002 /* TodoService.swift in Sources */,
+                000000050000000000000003 /* InterviewService.swift in Sources */,
+                000000050000000000000004 /* ConferenceService.swift in Sources */,
+                000000050000000000000005 /* AIService.swift in Sources */,
+                000000050000000000000006 /* EventKitService.swift in Sources */,
+                
+                /* Utils */
+                000000060000000000000001 /* NotificationManager.swift in Sources */,
+                
+                /* Resources */
+                000000070000000000000001 /* LifeAssistant.xcdatamodeld in Sources */,
+                
+                /* Intents */
+                000000080000000000000001 /* IntentHandler.swift in Sources */,
+                000000080000000000000002 /* Intents.intentdefinition in Sources */,
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+        000000000000000000000009 /* Debug */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ALWAYS_SEARCH_USER_PATHS = NO;
+                ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+                CLANG_ANALYZER_NONNULL = YES;
+                CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+                CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+                CLANG_ENABLE_MODULES = YES;
+                CLANG_ENABLE_OBJC_ARC = YES;
+                CLANG_ENABLE_OBJC_WEAK = YES;
+                CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+                CLANG_WARN_BOOL_CONVERSION = YES;
+                CLANG_WARN_COMMA = YES;
+                CLANG_WARN_CONSTANT_CONVERSION = YES;
+                CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+                CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+                CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+                CLANG_WARN_EMPTY_BODY = YES;
+                CLANG_WARN_ENUM_CONVERSION = YES;
+                CLANG_WARN_INFINITE_RECURSION = YES;
+                CLANG_WARN_INT_CONVERSION = YES;
+                CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+                CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+                CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+                CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+                CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+                CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+                CLANG_WARN_STRICT_PROTOTYPES = YES;
+                CLANG_WARN_SUSPICIOUS_MOVE = YES;
+                CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+                CLANG_WARN_UNREACHABLE_CODE = YES;
+                CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+                COPY_PHASE_STRIP = NO;
+                DEBUG_INFORMATION_FORMAT = dwarf;
+                ENABLE_STRICT_OBJC_MSGSEND = YES;
+                ENABLE_TESTABILITY = YES;
+                ENABLE_USER_SCRIPT_SANDBOXING = NO;
+                GCC_C_LANGUAGE_STANDARD = gnu17;
+                GCC_DYNAMIC_NO_PIC = NO;
+                GCC_NO_COMMON_BLOCKS = YES;
+                GCC_OPTIMIZATION_LEVEL = 0;
+                GCC_PREPROCESSOR_DEFINITIONS = (
+                    "DEBUG=1",
+                    "$(inherited)",
+                );
+                GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+                GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+                GCC_WARN_UNDECLARED_SELECTOR = YES;
+                GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+                GCC_WARN_UNUSED_FUNCTION = YES;
+                GCC_WARN_UNUSED_VARIABLE = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+                MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+                MTL_FAST_MATH = YES;
+                ONLY_ACTIVE_ARCH = YES;
+                SDKROOT = iphoneos;
+                SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+                SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+            };
+            name = Debug;
+        };
+        00000000000000000000000A /* Release */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ALWAYS_SEARCH_USER_PATHS = NO;
+                ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+                CLANG_ANALYZER_NONNULL = YES;
+                CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+                CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+                CLANG_ENABLE_MODULES = YES;
+                CLANG_ENABLE_OBJC_ARC = YES;
+                CLANG_ENABLE_OBJC_WEAK = YES;
+                CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+                CLANG_WARN_BOOL_CONVERSION = YES;
+                CLANG_WARN_COMMA = YES;
+                CLANG_WARN_CONSTANT_CONVERSION = YES;
+                CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+                CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+                CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+                CLANG_WARN_EMPTY_BODY = YES;
+                CLANG_WARN_ENUM_CONVERSION = YES;
+                CLANG_WARN_INFINITE_RECURSION = YES;
+                CLANG_WARN_INT_CONVERSION = YES;
+                CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+                CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+                CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+                CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+                CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+                CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+                CLANG_WARN_STRICT_PROTOTYPES = YES;
+                CLANG_WARN_SUSPICIOUS_MOVE = YES;
+                CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+                CLANG_WARN_UNREACHABLE_CODE = YES;
+                CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+                COPY_PHASE_STRIP = NO;
+                DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+                ENABLE_NS_ASSERTIONS = NO;
+                ENABLE_STRICT_OBJC_MSGSEND = YES;
+                ENABLE_USER_SCRIPT_SANDBOXING = NO;
+                GCC_C_LANGUAGE_STANDARD = gnu17;
+                GCC_NO_COMMON_BLOCKS = YES;
+                GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+                GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+                GCC_WARN_UNDECLARED_SELECTOR = YES;
+                GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+                GCC_WARN_UNUSED_FUNCTION = YES;
+                GCC_WARN_UNUSED_VARIABLE = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+                MTL_ENABLE_DEBUG_INFO = NO;
+                MTL_FAST_MATH = YES;
+                SDKROOT = iphoneos;
+                SWIFT_COMPILATION_MODE = wholemodule;
+                VALIDATE_PRODUCT = YES;
+            };
+            name = Release;
+        };
+        00000000000000000000000B /* Debug */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+                ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+                CODE_SIGN_ENTITLEMENTS = LifeAssistant/LifeAssistant.entitlements;
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                DEVELOPMENT_ASSET_PATHS = "";
+                DEVELOPMENT_TEAM = "";
+                ENABLE_PREVIEWS = YES;
+                GENERATE_INFOPLIST_FILE = YES;
+                INFOPLIST_FILE = LifeAssistant/Resources/Info.plist;
+                INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+                INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+                INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+                INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+                INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+                LD_RUNPATH_SEARCH_PATHS = (
+                    "$(inherited)",
+                    "@executable_path/Frameworks",
+                );
+                MARKETING_VERSION = 1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.LifeAssistant;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SWIFT_EMIT_LOC_STRINGS = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+            };
+            name = Debug;
+        };
+        00000000000000000000000C /* Release */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+                ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+                CODE_SIGN_ENTITLEMENTS = LifeAssistant/LifeAssistant.entitlements;
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                DEVELOPMENT_ASSET_PATHS = "";
+                DEVELOPMENT_TEAM = "";
+                ENABLE_PREVIEWS = YES;
+                GENERATE_INFOPLIST_FILE = YES;
+                INFOPLIST_FILE = LifeAssistant/Resources/Info.plist;
+                INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+                INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+                INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+                INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+                INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+                LD_RUNPATH_SEARCH_PATHS = (
+                    "$(inherited)",
+                    "@executable_path/Frameworks",
+                );
+                MARKETING_VERSION = 1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.LifeAssistant;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SWIFT_EMIT_LOC_STRINGS = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+            };
+            name = Release;
+        };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+        000000000000000000000004 /* Build configuration list for PBXNativeTarget "LifeAssistant" */ = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                00000000000000000000000B /* Debug */,
+                00000000000000000000000C /* Release */,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
+        000000000000000000000008 /* Build configuration list for PBXProject "LifeAssistant" */ = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                000000000000000000000009 /* Debug */,
+                00000000000000000000000A /* Release */,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+        0000000700000000000000F1 /* LifeAssistant.xcdatamodeld */ = {
+            isa = XCVersionGroup;
+            children = (
+                0000000700000000000000F4 /* LifeAssistant.xcdatamodel */,
+            );
+            currentVersion = 0000000700000000000000F4 /* LifeAssistant.xcdatamodel */;
+            path = LifeAssistant.xcdatamodeld;
+            sourceTree = "<group>";
+            versionGroupType = wrapper.xcdatamodel;
+        };
+/* End XCVersionGroup section */
+    };
+    rootObject = 000000000000000000000007 /* Project object */;
+}

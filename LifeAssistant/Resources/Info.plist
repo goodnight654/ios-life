@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- 基础配置 -->
+    <key>CFBundleDevelopmentRegion</key>
+    <string>zh_CN</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>$(PRODUCT_NAME)</string>
+    <key>CFBundlePackageType</key>
+    <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    
+    <!-- 应用名称 -->
+    <key>CFBundleDisplayName</key>
+    <string>生活助手</string>
+    
+    <!-- 支持的方向 -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    
+    <!-- 启动配置 -->
+    <key>UILaunchScreen</key>
+    <dict>
+        <key>UIColorName</key>
+        <string>LaunchScreenBackground</string>
+        <key>UIImageName</key>
+        <string>LaunchScreen</string>
+    </dict>
+    
+    <!-- 外观配置 -->
+    <key>UIUserInterfaceStyle</key>
+    <string>Automatic</string>
+    
+    <!-- 状态栏样式 -->
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <false/>
+    <key>UIStatusBarStyle</key>
+    <string>UIStatusBarStyleDefault</string>
+    
+    <!-- 安全区域 -->
+    <key>UIRequiresFullScreen</key>
+    <false/>
+    
+    <!-- 权限声明 -->
+    <!-- 相机权限 -->
+    <key>NSCameraUsageDescription</key>
+    <string>需要访问相机来拍照识别记账和待办信息</string>
+    
+    <!-- 相册权限 -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>需要访问相册来选择图片进行AI识别</string>
+    
+    <!-- 通知权限 -->
+    <key>NSUserNotificationUsageDescription</key>
+    <string>需要发送通知来提醒您待办事项的截止日期</string>
+    
+    <!-- 提醒事项权限 -->
+    <key>NSRemindersUsageDescription</key>
+    <string>需要访问提醒事项来同步您的待办任务</string>
+    
+    <!-- 日历权限 -->
+    <key>NSCalendarsUsageDescription</key>
+    <string>需要访问日历来添加面试和会议提醒</string>
+    
+    <!-- Siri权限 -->
+    <key>NSSiriUsageDescription</key>
+    <string>需要Siri权限来支持快捷指令功能</string>
+    
+    <!-- CloudKit配置 -->
+    <key>CKContainerIdentifier</key>
+    <string>iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    
+    <!-- 后台模式 -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+        <string>remote-notification</string>
+    </array>
+    
+    <!-- 应用传输安全 -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>api.openai.com</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <false/>
+                <key>NSExceptionMinimumTLSVersion</key>
+                <string>TLSv1.2</string>
+                <key>NSExceptionRequiresForwardSecrecy</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+        </dict>
+    </dict>
+    
+    <!-- 快捷指令 -->
+    <key>NSUserActivityTypes</key>
+    <array>
+        <string>AddAccountRecordIntent</string>
+        <string>AddTodoIntent</string>
+        <string>AddInterviewIntent</string>
+        <string>AddConferenceIntent</string>
+        <string>GetTodoListIntent</string>
+        <string>GetInterviewListIntent</string>
+    </array>
+    
+    <!-- 文档类型 -->
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Image</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.image</string>
+                <string>public.jpeg</string>
+                <string>public.png</string>
+            </array>
+        </dict>
+    </array>
+    
+    <!-- URL Scheme -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>lifeassistant</string>
+            </array>
+        </dict>
+    </array>
+</dict>
+</plist>
