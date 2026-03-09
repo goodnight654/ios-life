@@ -2,34 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- iCloud 容器 -->
-    <key>com.apple.developer.icloud-container-identifiers</key>
-    <array>
-        <string>iCloud.$(CFBundleIdentifier)</string>
-    </array>
-    
-    <!-- CloudKit 服务 -->
-    <key>com.apple.developer.icloud-services</key>
-    <array>
-        <string>CloudKit</string>
-    </array>
-    
-    <!-- 后台获取 -->
-    <key>com.apple.developer.background-fetch</key>
-    <true/>
-    
-    <!-- 推送通知 -->
-    <key>aps-environment</key>
-    <string>development</string>
-    
-    <!-- Siri -->
-    <key>com.apple.developer.siri</key>
-    <true/>
-    
-    <!-- 应用组 (用于小组件和快捷指令共享数据) -->
-    <key>com.apple.security.application-groups</key>
-    <array>
-        <string>group.$(CFBundleIdentifier)</string>
-    </array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.yourcompany.LifeAssistant</string>
+	</array>
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.com.yourcompany.LifeAssistant</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudKit</string>
+	</array>
 </dict>
 </plist>

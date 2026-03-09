@@ -17,33 +17,42 @@ struct TodoView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 16) {
-                    // 进度概览
-                    TodoProgressCard(progress: service.progress)
-                    
-                    // 快速筛选
-                    QuickFilterBar(selectedFilter: $selectedFilter, service: service)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // 进度概览
+                        TodoProgressCard(progress: service.progress)
+                            .id("top")
+
+                        // 快速筛选
+                        QuickFilterBar(selectedFilter: $selectedFilter, service: service)
+                            .padding(.horizontal)
+
+                        // 待办列表
+                        TodoListSection(
+                            todos: filteredTodos,
+                            onToggle: { todo in
+                                service.toggleComplete(todo)
+                            },
+                            onDelete: { todo in
+                                service.deleteTodo(todo)
+                            },
+                            onEdit: { todo in
+                                selectedTodo = todo
+                            }
+                        )
                         .padding(.horizontal)
-                    
-                    // 待办列表
-                    TodoListSection(
-                        todos: filteredTodos,
-                        onToggle: { todo in
-                            service.toggleComplete(todo)
-                        },
-                        onDelete: { todo in
-                            service.deleteTodo(todo)
-                        },
-                        onEdit: { todo in
-                            selectedTodo = todo
-                        }
-                    )
-                    .padding(.horizontal)
+                    }
+                    .padding(.vertical)
                 }
-                .padding(.vertical)
+                .onAppear {
+                    withAnimation {
+                        proxy.scrollTo("top", anchor: .top)
+                    }
+                }
             }
             .navigationTitle("待办事项")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddSheet = true }) {
@@ -55,9 +64,15 @@ struct TodoView: View {
             }
             .sheet(isPresented: $showingAddSheet) {
                 AddTodoView(service: service)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
             .sheet(item: $selectedTodo) { todo in
                 EditTodoView(service: service, todo: todo)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
         }
     }
@@ -259,21 +274,22 @@ struct TodoListSection: View {
 
 struct TodoRow: View {
     let todo: TodoItem
-    
+
     var body: some View {
         HStack(spacing: 12) {
             // 完成状态
-            ZStack {
+            ZStack(alignment: .center) {
                 Circle()
                     .stroke(todo.isCompleted ? Color.green : Color(hex: todo.priority.color), lineWidth: 2)
                     .frame(width: 28, height: 28)
-                
+
                 if todo.isCompleted {
                     Image(systemName: "checkmark")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.green)
                 }
             }
+            .frame(width: 28, height: 28)
             
             // 内容
             VStack(alignment: .leading, spacing: 4) {

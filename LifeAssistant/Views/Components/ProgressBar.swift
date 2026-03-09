@@ -11,14 +11,14 @@ struct ProgressBar: View {
     var backgroundColor: Color = Color.gray.opacity(0.2)
     var foregroundColor: Color = .blue
     var animated: Bool = true
-    
+
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 // 背景
                 RoundedRectangle(cornerRadius: height / 2)
                     .fill(backgroundColor)
-                
+
                 // 进度条
                 RoundedRectangle(cornerRadius: height / 2)
                     .fill(
@@ -32,7 +32,7 @@ struct ProgressBar: View {
                         )
                     )
                     .frame(width: max(0, min(CGFloat(progress) * geometry.size.width, geometry.size.width)))
-                    .animation(animated ? .easeInOut(duration: 0.3) : nil, value: progress)
+                    .animation(animated ? .spring(response: 0.4, dampingFraction: 0.7) : nil, value: progress)
             }
         }
         .frame(height: height)
@@ -46,13 +46,13 @@ struct CircularProgressView: View {
     var foregroundColor: Color = .blue
     var backgroundColor: Color = Color.gray.opacity(0.2)
     var showPercentage: Bool = true
-    
+
     var body: some View {
         ZStack {
             // 背景圆环
             Circle()
                 .stroke(backgroundColor, lineWidth: lineWidth)
-            
+
             // 进度圆环
             Circle()
                 .trim(from: 0, to: CGFloat(min(progress, 1.0)))
@@ -70,14 +70,15 @@ struct CircularProgressView: View {
                     style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.5), value: progress)
-            
+                .animation(.spring(response: 0.5, dampingFraction: 0.7), value: progress)
+
             // 百分比文字
             if showPercentage {
                 VStack(spacing: 0) {
                     Text("\(Int(progress * 100))")
                         .font(.system(size: size * 0.25, weight: .bold))
                         .foregroundColor(foregroundColor)
+                        .contentTransition(.numericText())
                     Text("%")
                         .font(.system(size: size * 0.12, weight: .medium))
                         .foregroundColor(foregroundColor.opacity(0.8))

@@ -12,7 +12,7 @@ struct CardView<Content: View>: View {
     var shadowRadius: CGFloat = 4
     var shadowColor: Color = Color.black.opacity(0.1)
     var padding: CGFloat = 16
-    
+
     init(
         backgroundColor: Color = .white,
         cornerRadius: CGFloat = 16,
@@ -28,12 +28,12 @@ struct CardView<Content: View>: View {
         self.padding = padding
         self.content = content()
     }
-    
+
     var body: some View {
         content
             .padding(padding)
             .background(backgroundColor)
-            .cornerRadius(cornerRadius)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .shadow(color: shadowColor, radius: shadowRadius, x: 0, y: 2)
     }
 }
@@ -44,7 +44,7 @@ struct GradientCardView<Content: View>: View {
     var cornerRadius: CGFloat = 20
     var shadowRadius: CGFloat = 8
     var padding: CGFloat = 20
-    
+
     init(
         colors: [Color] = [Color.blue.opacity(0.8), Color.purple.opacity(0.8)],
         cornerRadius: CGFloat = 20,
@@ -58,7 +58,7 @@ struct GradientCardView<Content: View>: View {
         self.padding = padding
         self.content = content()
     }
-    
+
     var body: some View {
         content
             .padding(padding)
@@ -69,7 +69,7 @@ struct GradientCardView<Content: View>: View {
                     endPoint: .bottomTrailing
                 )
             )
-            .cornerRadius(cornerRadius)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .shadow(color: colors.first?.opacity(0.3) ?? Color.black.opacity(0.2), radius: shadowRadius, x: 0, y: 4)
     }
 }
@@ -79,7 +79,7 @@ struct GlassCardView<Content: View>: View {
     var cornerRadius: CGFloat = 20
     var blurRadius: CGFloat = 10
     var padding: CGFloat = 20
-    
+
     init(
         cornerRadius: CGFloat = 20,
         blurRadius: CGFloat = 10,
@@ -91,12 +91,12 @@ struct GlassCardView<Content: View>: View {
         self.padding = padding
         self.content = content()
     }
-    
+
     var body: some View {
         content
             .padding(padding)
             .background(.ultraThinMaterial)
-            .cornerRadius(cornerRadius)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(Color.white.opacity(0.2), lineWidth: 1)

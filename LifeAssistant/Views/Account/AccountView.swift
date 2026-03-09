@@ -11,37 +11,60 @@ struct AccountView: View {
     @State private var showingAddSheet = false
     @State private var selectedDateRange: DateRange = .month
     @State private var selectedRecord: AccountRecord?
-    
+    @State private var showingMonthlySummary = false
+    @State private var showingYearlySummary = false
+    @State private var selectedYear: Int?
+
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 统计卡片
-                    StatisticsCard(statistics: service.getStatistics(for: selectedDateRange))
-                    
-                    // 时间范围选择器
-                    DateRangePicker(selectedRange: $selectedDateRange)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // 统计卡片
+                        StatisticsCard(statistics: service.getStatistics(for: selectedDateRange))
+                            .id("top")
+
+                        // 时间范围选择器
+                        DateRangePicker(selectedRange: $selectedDateRange)
+                            .padding(.horizontal)
+
+                        // 汇总入口
+                        SummaryButtons(
+                            onMonthlyTap: { showingMonthlySummary = true },
+                            onYearlyTap: {
+                                selectedYear = Calendar.current.component(.year, from: Date())
+                                showingYearlySummary = true
+                            }
+                        )
                         .padding(.horizontal)
-                    
-                    // 分类统计
-                    CategoryBreakdownView(statistics: service.getStatistics(for: selectedDateRange))
+
+                        // 分类统计
+                        CategoryBreakdownView(statistics: service.getStatistics(for: selectedDateRange))
+                            .padding(.horizontal)
+
+                        // 最近记录
+                        RecentRecordsSection(
+                            records: service.records.prefix(10).map { $0 },
+                            onDelete: { record in
+                                service.deleteRecord(record)
+                            },
+                            onEdit: { record in
+                                selectedRecord = record
+                            }
+                        )
                         .padding(.horizontal)
-                    
-                    // 最近记录
-                    RecentRecordsSection(
-                        records: service.records.prefix(10).map { $0 },
-                        onDelete: { record in
-                            service.deleteRecord(record)
-                        },
-                        onEdit: { record in
-                            selectedRecord = record
-                        }
-                    )
-                    .padding(.horizontal)
+                    }
+                    .padding(.vertical)
                 }
-                .padding(.vertical)
+                .onAppear {
+                    // 确保滚动到顶部
+                    withAnimation {
+                        proxy.scrollTo("top", anchor: .top)
+                    }
+                }
             }
             .navigationTitle("记账")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddSheet = true }) {
@@ -53,9 +76,29 @@ struct AccountView: View {
             }
             .sheet(isPresented: $showingAddSheet) {
                 AddAccountRecordView(service: service)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
             .sheet(item: $selectedRecord) { record in
                 EditAccountRecordView(service: service, record: record)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
+            }
+            .sheet(isPresented: $showingMonthlySummary) {
+                MonthlySummaryView(service: service)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
+            }
+            .sheet(isPresented: $showingYearlySummary) {
+                if let year = selectedYear {
+                    YearlySummaryView(service: service, year: year)
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(20)
+                }
             }
         }
     }
@@ -183,15 +226,15 @@ struct CategoryRow: View {
     let category: AccountCategory
     let amount: Double
     let total: Double
-    
+
     var percentage: Double {
         total > 0 ? amount / total : 0
     }
-    
+
     var body: some View {
         HStack(spacing: 12) {
             // 图标
-            ZStack {
+            ZStack(alignment: .center) {
                 Circle()
                     .fill(Color(hex: category.color).opacity(0.2))
                     .frame(width: 36, height: 36)
@@ -199,6 +242,7 @@ struct CategoryRow: View {
                     .font(.system(size: 16))
                     .foregroundColor(Color(hex: category.color))
             }
+            .frame(width: 36, height: 36)
             
             // 名称和进度
             VStack(alignment: .leading, spacing: 4) {
@@ -274,11 +318,11 @@ struct RecentRecordsSection: View {
 
 struct AccountRecordRow: View {
     let record: AccountRecord
-    
+
     var body: some View {
         HStack(spacing: 12) {
             // 分类图标
-            ZStack {
+            ZStack(alignment: .center) {
                 Circle()
                     .fill(Color(hex: record.category.color).opacity(0.15))
                     .frame(width: 44, height: 44)
@@ -286,6 +330,7 @@ struct AccountRecordRow: View {
                     .font(.system(size: 18))
                     .foregroundColor(Color(hex: record.category.color))
             }
+            .frame(width: 44, height: 44)
             
             // 信息
             VStack(alignment: .leading, spacing: 4) {
@@ -516,11 +561,11 @@ struct CategoryButton: View {
     let category: AccountCategory
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
-                ZStack {
+                ZStack(alignment: .center) {
                     Circle()
                         .fill(isSelected ? Color(hex: category.color) : Color(hex: category.color).opacity(0.15))
                         .frame(width: 50, height: 50)
@@ -528,11 +573,15 @@ struct CategoryButton: View {
                         .font(.system(size: 20))
                         .foregroundColor(isSelected ? .white : Color(hex: category.color))
                 }
-                
+                .frame(width: 50, height: 50)
+
                 Text(category.rawValue)
                     .font(.caption)
                     .foregroundColor(isSelected ? Color(hex: category.color) : .secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
             }
+            .frame(minWidth: 60)
         }
     }
 }
@@ -562,6 +611,467 @@ extension Color {
             blue:  Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+}
+
+// MARK: - 汇总按钮
+struct SummaryButtons: View {
+    let onMonthlyTap: () -> Void
+    let onYearlyTap: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: onMonthlyTap) {
+                HStack {
+                    Image(systemName: "calendar.badge.clock")
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("月度汇总")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                        Text("查看本月收支详情")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(12)
+            }
+            .foregroundColor(.primary)
+
+            Button(action: onYearlyTap) {
+                HStack {
+                    Image(systemName: "chart.bar.fill")
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("年度汇总")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                        Text("查看年度统计")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(12)
+            }
+            .foregroundColor(.primary)
+        }
+    }
+}
+
+// MARK: - 月度汇总视图
+struct MonthlySummaryView: View {
+    let service: AccountService
+    @Environment(\.dismiss) var dismiss
+    @State private var selectedMonth = Date()
+
+    private var summary: MonthlySummary {
+        service.getMonthlySummary(for: selectedMonth)
+    }
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // 月份选择器
+                    HStack {
+                        Button(action: { changeMonth(by: -1) }) {
+                            Image(systemName: "chevron.left.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                        }
+
+                        Spacer()
+
+                        Text(summary.monthString)
+                            .font(.title2)
+                            .fontWeight(.bold)
+
+                        Spacer()
+
+                        Button(action: { changeMonth(by: 1) }) {
+                            Image(systemName: "chevron.right.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                        }
+                    }
+                    .padding(.horizontal)
+
+                    // 总览卡片
+                    MonthlyOverviewCard(summary: summary)
+
+                    // 收支对比
+                    IncomeExpenseCard(income: summary.totalIncome, expense: summary.totalExpense)
+
+                    // 分类明细
+                    if !summary.categoryBreakdown.isEmpty {
+                        CategoryBreakdownCard(breakdown: summary.categoryBreakdown, total: summary.totalExpense)
+                    }
+
+                    // 统计信息
+                    StatisticsInfoCard(recordCount: summary.recordCount)
+                }
+                .padding(.vertical)
+            }
+            .navigationTitle("月度汇总")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("关闭") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private func changeMonth(by value: Int) {
+        if let newMonth = Calendar.current.date(byAdding: .month, value: value, to: selectedMonth) {
+            selectedMonth = newMonth
+        }
+    }
+}
+
+struct MonthlyOverviewCard: View {
+    let summary: MonthlySummary
+
+    var body: some View {
+        GradientCardView(
+            colors: [Color(hex: "667eea"), Color(hex: "764ba2")],
+            cornerRadius: 20,
+            shadowRadius: 8
+        ) {
+            VStack(spacing: 16) {
+                Text("本月结余")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.8))
+
+                Text(String(format: "¥%.2f", summary.balance))
+                    .font(.system(size: 36, weight: .bold))
+                    .foregroundColor(.white)
+
+                HStack(spacing: 40) {
+                    VStack(spacing: 4) {
+                        Text("收入")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                        Text(String(format: "¥%.2f", summary.totalIncome))
+                            .font(.headline)
+                            .foregroundColor(Color(hex: "4ade80"))
+                    }
+
+                    VStack(spacing: 4) {
+                        Text("支出")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                        Text(String(format: "¥%.2f", summary.totalExpense))
+                            .font(.headline)
+                            .foregroundColor(Color(hex: "f87171"))
+                    }
+                }
+            }
+            .padding(.vertical, 16)
+        }
+        .padding(.horizontal)
+    }
+}
+
+struct IncomeExpenseCard: View {
+    let income: Double
+    let expense: Double
+
+    var total: Double { income + expense }
+    var incomePercent: Double { total > 0 ? income / total : 0 }
+    var expensePercent: Double { total > 0 ? expense / total : 0 }
+
+    var body: some View {
+        CardView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("收支对比")
+                    .font(.headline)
+
+                HStack(spacing: 4) {
+                    // 收入条
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.green)
+                        .frame(width: max(20, CGFloat(incomePercent) * 200), height: 24)
+
+                    // 支出条
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.red)
+                        .frame(width: max(20, CGFloat(expensePercent) * 200), height: 24)
+                }
+
+                HStack {
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 8, height: 8)
+                        Text("收入 \(String(format: "%.1f%%", incomePercent * 100))")
+                            .font(.caption)
+                    }
+
+                    Spacer()
+
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 8, height: 8)
+                        Text("支出 \(String(format: "%.1f%%", expensePercent * 100))")
+                            .font(.caption)
+                    }
+                }
+            }
+        }
+        .padding(.horizontal)
+    }
+}
+
+struct CategoryBreakdownCard: View {
+    let breakdown: [AccountCategory: Double]
+    let total: Double
+
+    var sortedCategories: [(AccountCategory, Double)] {
+        breakdown.sorted { $0.value > $1.value }
+    }
+
+    var body: some View {
+        CardView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("支出分类")
+                    .font(.headline)
+
+                ForEach(sortedCategories.prefix(6), id: \.0.rawValue) { category, amount in
+                    HStack(spacing: 12) {
+                        Image(systemName: category.icon)
+                            .font(.system(size: 16))
+                            .foregroundColor(Color(hex: category.color))
+                            .frame(width: 24)
+
+                        Text(category.rawValue)
+                            .font(.subheadline)
+
+                        Spacer()
+
+                        Text(String(format: "¥%.2f", amount))
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                    }
+                }
+            }
+        }
+        .padding(.horizontal)
+    }
+}
+
+struct StatisticsInfoCard: View {
+    let recordCount: Int
+
+    var body: some View {
+        CardView {
+            HStack {
+                Image(systemName: "doc.text.fill")
+                    .foregroundColor(.blue)
+                Text("共 \(recordCount) 笔记录")
+                    .font(.subheadline)
+                Spacer()
+            }
+        }
+        .padding(.horizontal)
+    }
+}
+
+// MARK: - 年度汇总视图
+struct YearlySummaryView: View {
+    let service: AccountService
+    let year: Int
+    @Environment(\.dismiss) var dismiss
+
+    private var summary: YearlySummary {
+        service.getYearlySummary(for: year)
+    }
+
+    private var availableYears: [Int] {
+        service.getAvailableYears()
+    }
+
+    @State private var selectedYear: Int
+
+    init(service: AccountService, year: Int) {
+        self.service = service
+        self.year = year
+        _selectedYear = State(initialValue: year)
+    }
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // 年份选择器
+                    Picker("选择年份", selection: $selectedYear) {
+                        ForEach(availableYears, id: \.self) { year in
+                            Text("\(year)年").tag(year)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding(.horizontal)
+
+                    // 年度总览
+                    YearlyOverviewCard(summary: service.getYearlySummary(for: selectedYear))
+
+                    // 月度趋势
+                    MonthlyTrendCard(monthlyData: service.getYearlySummary(for: selectedYear).monthlyData)
+
+                    // 支出分类
+                    if !service.getYearlySummary(for: selectedYear).categoryBreakdown.isEmpty {
+                        CategoryBreakdownCard(
+                            breakdown: service.getYearlySummary(for: selectedYear).categoryBreakdown,
+                            total: service.getYearlySummary(for: selectedYear).totalExpense
+                        )
+                    }
+
+                    // 统计信息
+                    YearlyStatisticsCard(summary: service.getYearlySummary(for: selectedYear))
+                }
+                .padding(.vertical)
+            }
+            .navigationTitle("年度汇总")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("关闭") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+struct YearlyOverviewCard: View {
+    let summary: YearlySummary
+
+    var body: some View {
+        GradientCardView(
+            colors: [Color(hex: "f093fb"), Color(hex: "f5576c")],
+            cornerRadius: 20,
+            shadowRadius: 8
+        ) {
+            VStack(spacing: 16) {
+                Text("\(summary.year)年度总结")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.8))
+
+                Text(String(format: "¥%.2f", summary.balance))
+                    .font(.system(size: 36, weight: .bold))
+                    .foregroundColor(.white)
+
+                HStack(spacing: 40) {
+                    VStack(spacing: 4) {
+                        Text("总收入")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                        Text(String(format: "¥%.2f", summary.totalIncome))
+                            .font(.headline)
+                            .foregroundColor(Color(hex: "4ade80"))
+                    }
+
+                    VStack(spacing: 4) {
+                        Text("总支出")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                        Text(String(format: "¥%.2f", summary.totalExpense))
+                            .font(.headline)
+                            .foregroundColor(Color(hex: "f87171"))
+                    }
+                }
+            }
+            .padding(.vertical, 16)
+        }
+        .padding(.horizontal)
+    }
+}
+
+struct MonthlyTrendCard: View {
+    let monthlyData: [Int: (income: Double, expense: Double)]
+
+    var sortedMonths: [(Int, (income: Double, expense: Double))] {
+        monthlyData.sorted { $0.key < $1.key }
+    }
+
+    var maxExpense: Double {
+        monthlyData.values.map { $0.expense }.max() ?? 1
+    }
+
+    var body: some View {
+        CardView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("月度支出趋势")
+                    .font(.headline)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(1...12, id: \.self) { month in
+                            VStack(spacing: 4) {
+                                Rectangle()
+                                    .fill(Color.blue.opacity(0.7))
+                                    .frame(width: 24, height: CGFloat((monthlyData[month]?.expense ?? 0) / maxExpense) * 100)
+
+                                Text("\(month)月")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+
+                HStack {
+                    Text("月均支出:")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    let avgExpense = monthlyData.filter { $0.value.expense > 0 }.values.map { $0.expense }.reduce(0, +) / Double(max(1, monthlyData.filter { $0.value.expense > 0 }.count))
+                    Text(String(format: "¥%.2f", avgExpense))
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                }
+            }
+        }
+        .padding(.horizontal)
+    }
+}
+
+struct YearlyStatisticsCard: View {
+    let summary: YearlySummary
+
+    var body: some View {
+        CardView {
+            VStack(spacing: 12) {
+                HStack {
+                    Image(systemName: "doc.text.fill")
+                        .foregroundColor(.blue)
+                    Text("全年共 \(summary.recordCount) 笔记录")
+                        .font(.subheadline)
+                    Spacer()
+                }
+
+                HStack {
+                    Image(systemName: "calendar.badge.clock")
+                        .foregroundColor(.orange)
+                    Text("月均支出: \(String(format: "¥%.2f", summary.averageMonthlyExpense))")
+                        .font(.subheadline)
+                    Spacer()
+                }
+            }
+        }
+        .padding(.horizontal)
     }
 }
 

@@ -100,7 +100,7 @@ struct Interview: Identifiable {
         if days < 0 { return .overdue }
         if days <= 3 { return .urgent }
         if days <= 7 { return .soon }
-        return .normal }
+        return .normal
     }
 }
 

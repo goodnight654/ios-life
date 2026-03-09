@@ -37,40 +37,49 @@ struct ConferenceView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 16) {
-                    // 统计概览
-                    ConferenceStatisticsCard(statistics: service.statistics)
-                    
-                    // 分类选择器
-                    CategorySelector(
-                        selectedCategory: $selectedCategory,
-                        statistics: service.statistics
-                    )
-                    .padding(.horizontal)
-                    
-                    // 筛选和排序
-                    ConferenceFilterBar(
-                        selectedFilter: $selectedFilter,
-                        selectedSort: $selectedSort
-                    )
-                    .padding(.horizontal)
-                    
-                    // 会议列表
-                    ConferenceListSection(
-                        conferences: filteredConferences,
-                        onDelete: { conference in
-                            service.deleteConference(conference)
-                        },
-                        onEdit: { conference in
-                            selectedConference = conference
-                        }
-                    )
-                    .padding(.horizontal)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // 统计概览
+                        ConferenceStatisticsCard(statistics: service.statistics)
+                            .id("top")
+
+                        // 分类选择器
+                        CategorySelector(
+                            selectedCategory: $selectedCategory,
+                            statistics: service.statistics
+                        )
+                        .padding(.horizontal)
+
+                        // 筛选和排序
+                        ConferenceFilterBar(
+                            selectedFilter: $selectedFilter,
+                            selectedSort: $selectedSort
+                        )
+                        .padding(.horizontal)
+
+                        // 会议列表
+                        ConferenceListSection(
+                            conferences: filteredConferences,
+                            onDelete: { conference in
+                                service.deleteConference(conference)
+                            },
+                            onEdit: { conference in
+                                selectedConference = conference
+                            }
+                        )
+                        .padding(.horizontal)
+                    }
+                    .padding(.vertical)
                 }
-                .padding(.vertical)
+                .onAppear {
+                    withAnimation {
+                        proxy.scrollTo("top", anchor: .top)
+                    }
+                }
             }
             .navigationTitle("会议/期刊")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddSheet = true }) {
@@ -82,9 +91,15 @@ struct ConferenceView: View {
             }
             .sheet(isPresented: $showingAddSheet) {
                 AddConferenceView(service: service)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
             .sheet(item: $selectedConference) { conference in
                 EditConferenceView(service: service, conference: conference)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
         }
     }
@@ -191,14 +206,16 @@ struct CategoryFilterButton: View {
     let color: Color
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(isSelected ? .semibold : .medium)
-                
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+
                 Text("\(count)")
                     .font(.caption)
                     .fontWeight(.bold)
@@ -213,6 +230,7 @@ struct CategoryFilterButton: View {
             )
             .cornerRadius(12)
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -332,12 +350,12 @@ struct ConferenceListSection: View {
 
 struct ConferenceCard: View {
     let conference: Conference
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 // 类型图标
-                ZStack {
+                ZStack(alignment: .center) {
                     Circle()
                         .fill(Color(hex: conference.category.color).opacity(0.15))
                         .frame(width: 40, height: 40)
@@ -345,6 +363,7 @@ struct ConferenceCard: View {
                         .font(.system(size: 18))
                         .foregroundColor(Color(hex: conference.category.color))
                 }
+                .frame(width: 40, height: 40)
                 
                 // 名称和分类
                 VStack(alignment: .leading, spacing: 4) {

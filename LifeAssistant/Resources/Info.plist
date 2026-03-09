@@ -19,11 +19,11 @@
     <string>1.0</string>
     <key>CFBundleVersion</key>
     <string>1</string>
-    
+
     <!-- 应用名称 -->
     <key>CFBundleDisplayName</key>
     <string>生活助手</string>
-    
+
     <!-- 支持的方向 -->
     <key>UISupportedInterfaceOrientations</key>
     <array>
@@ -38,7 +38,7 @@
         <string>UIInterfaceOrientationLandscapeLeft</string>
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
-    
+
     <!-- 启动配置 -->
     <key>UILaunchScreen</key>
     <dict>
@@ -47,57 +47,61 @@
         <key>UIImageName</key>
         <string>LaunchScreen</string>
     </dict>
-    
+
     <!-- 外观配置 -->
     <key>UIUserInterfaceStyle</key>
     <string>Automatic</string>
-    
+
     <!-- 状态栏样式 -->
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
     <key>UIStatusBarStyle</key>
     <string>UIStatusBarStyleDefault</string>
-    
+
     <!-- 安全区域 -->
     <key>UIRequiresFullScreen</key>
     <false/>
-    
+
     <!-- 权限声明 -->
     <!-- 相机权限 -->
     <key>NSCameraUsageDescription</key>
     <string>需要访问相机来拍照识别记账和待办信息</string>
-    
+
     <!-- 相册权限 -->
     <key>NSPhotoLibraryUsageDescription</key>
     <string>需要访问相册来选择图片进行AI识别</string>
-    
+
     <!-- 通知权限 -->
     <key>NSUserNotificationUsageDescription</key>
     <string>需要发送通知来提醒您待办事项的截止日期</string>
-    
+
     <!-- 提醒事项权限 -->
     <key>NSRemindersUsageDescription</key>
     <string>需要访问提醒事项来同步您的待办任务</string>
-    
+
     <!-- 日历权限 -->
     <key>NSCalendarsUsageDescription</key>
     <string>需要访问日历来添加面试和会议提醒</string>
-    
+
     <!-- Siri权限 -->
     <key>NSSiriUsageDescription</key>
-    <string>需要Siri权限来支持快捷指令功能</string>
-    
+    <string>需要使用Siri来快速添加记账、待办等记录</string>
+
+    <!-- Siri权限 -->
+    <key>NSSiriUsageDescription</key>
+    <string>需要使用Siri来快速添加记账、待办等记录</string>
+
     <!-- CloudKit配置 -->
     <key>CKContainerIdentifier</key>
     <string>iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-    
+
     <!-- 后台模式 -->
     <key>UIBackgroundModes</key>
     <array>
         <string>fetch</string>
         <string>remote-notification</string>
     </array>
-    
+
     <!-- 应用传输安全 -->
     <key>NSAppTransportSecurity</key>
     <dict>
@@ -118,18 +122,7 @@
             </dict>
         </dict>
     </dict>
-    
-    <!-- 快捷指令 -->
-    <key>NSUserActivityTypes</key>
-    <array>
-        <string>AddAccountRecordIntent</string>
-        <string>AddTodoIntent</string>
-        <string>AddInterviewIntent</string>
-        <string>AddConferenceIntent</string>
-        <string>GetTodoListIntent</string>
-        <string>GetInterviewListIntent</string>
-    </array>
-    
+
     <!-- 文档类型 -->
     <key>CFBundleDocumentTypes</key>
     <array>
@@ -148,7 +141,7 @@
             </array>
         </dict>
     </array>
-    
+
     <!-- URL Scheme -->
     <key>CFBundleURLTypes</key>
     <array>

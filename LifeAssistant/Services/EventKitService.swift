@@ -59,7 +59,7 @@ class EventKitService: ObservableObject {
         let reminder = EKReminder(eventStore: eventStore)
         reminder.title = title
         reminder.notes = notes
-        reminder.priority = priority.rawValue
+        reminder.priority = Int(priority.rawValue)
         
         if let dueDate = dueDate {
             reminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: dueDate)

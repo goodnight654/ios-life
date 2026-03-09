@@ -18,36 +18,45 @@ struct InterviewView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 16) {
-                    // 统计概览
-                    InterviewStatisticsCard(statistics: service.statistics)
-                    
-                    // 筛选和排序
-                    InterviewFilterBar(
-                        selectedFilter: $selectedFilter,
-                        selectedSort: $selectedSort
-                    )
-                    .padding(.horizontal)
-                    
-                    // 面试列表
-                    InterviewListSection(
-                        interviews: filteredInterviews,
-                        onStatusChange: { interview, status in
-                            service.updateStatus(for: interview, to: status)
-                        },
-                        onDelete: { interview in
-                            service.deleteInterview(interview)
-                        },
-                        onEdit: { interview in
-                            selectedInterview = interview
-                        }
-                    )
-                    .padding(.horizontal)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // 统计概览
+                        InterviewStatisticsCard(statistics: service.statistics)
+                            .id("top")
+
+                        // 筛选和排序
+                        InterviewFilterBar(
+                            selectedFilter: $selectedFilter,
+                            selectedSort: $selectedSort
+                        )
+                        .padding(.horizontal)
+
+                        // 面试列表
+                        InterviewListSection(
+                            interviews: filteredInterviews,
+                            onStatusChange: { interview, status in
+                                service.updateStatus(for: interview, to: status)
+                            },
+                            onDelete: { interview in
+                                service.deleteInterview(interview)
+                            },
+                            onEdit: { interview in
+                                selectedInterview = interview
+                            }
+                        )
+                        .padding(.horizontal)
+                    }
+                    .padding(.vertical)
                 }
-                .padding(.vertical)
+                .onAppear {
+                    withAnimation {
+                        proxy.scrollTo("top", anchor: .top)
+                    }
+                }
             }
             .navigationTitle("面试汇总")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddSheet = true }) {
@@ -59,9 +68,15 @@ struct InterviewView: View {
             }
             .sheet(isPresented: $showingAddSheet) {
                 AddInterviewView(service: service)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
             .sheet(item: $selectedInterview) { interview in
                 EditInterviewView(service: service, interview: interview)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
         }
     }

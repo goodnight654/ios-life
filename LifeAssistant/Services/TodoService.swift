@@ -229,7 +229,7 @@ enum TodoFilter: String, CaseIterable, Identifiable {
         case .active: return "circle"
         case .completed: return "checkmark.circle.fill"
         case .overdue: return "exclamationmark.circle.fill"
-        case .today: return "calendar.day"
+        case .today: return "calendar"
         case .upcoming: return "calendar.badge.clock"
         }
     }

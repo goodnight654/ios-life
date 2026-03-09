@@ -7,43 +7,57 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selectedTab = 0
-    
+
     var body: some View {
         TabView(selection: $selectedTab) {
+            // 主页 Tab
+            HomeView(selectedTab: $selectedTab)
+                .tabItem {
+                    Label("主页", systemImage: "house.fill")
+                }
+                .tag(0)
+
             // 记账 Tab
             AccountView()
                 .tabItem {
                     Label("记账", systemImage: "dollarsign.circle.fill")
                 }
-                .tag(0)
-            
+                .tag(1)
+
             // 待办 Tab
             TodoView()
                 .tabItem {
                     Label("待办", systemImage: "checklist")
                 }
-                .tag(1)
-            
+                .tag(2)
+
             // AI 识图 Tab
             AIRecognitionView()
                 .tabItem {
                     Label("AI识图", systemImage: "camera.viewfinder")
                 }
-                .tag(2)
-            
+                .tag(3)
+
             // 面试 Tab
             InterviewView()
                 .tabItem {
                     Label("面试", systemImage: "briefcase.fill")
                 }
-                .tag(3)
-            
+                .tag(4)
+
             // 会议 Tab
             ConferenceView()
                 .tabItem {
                     Label("会议", systemImage: "calendar.badge.clock")
                 }
-                .tag(4)
+                .tag(5)
+
+            // 进度 Tab
+            ProgressTrackingView()
+                .tabItem {
+                    Label("进度", systemImage: "target")
+                }
+                .tag(6)
         }
         .accentColor(.blue)
         .onAppear {
@@ -52,6 +66,12 @@ struct ContentView: View {
             appearance.configureWithDefaultBackground()
             UITabBar.appearance().standardAppearance = appearance
             UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("OpenAIRecognitionTab"))) { _ in
+            // 从快捷指令接收到通知，切换到AI识图tab
+            withAnimation {
+                selectedTab = 3
+            }
         }
     }
 }

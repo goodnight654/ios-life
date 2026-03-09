@@ -35,22 +35,64 @@ class AIService: ObservableObject {
     @Published var isProcessing = false
     @Published var lastResult: AIRecognitionResult?
     @Published var recognitionHistory: [AIRecognitionRecord] = []
-    
+    @Published var lastError: String?
+
     private let viewContext: NSManagedObjectContext
-    private let openAIAPIKey: String? = nil // 用户需要配置自己的 API Key
-    
+
     init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
         self.viewContext = context
         fetchHistory()
     }
-    
+
     // MARK: - Main Recognition Methods
-    
+
     func recognizeImage(_ image: UIImage, completion: @escaping (AIRecognitionResult?) -> Void) {
         isProcessing = true
-        
-        // 首先使用 Vision 框架进行本地 OCR
-        performLocalOCR(on: image) { recognizedText in
+        lastError = nil
+
+        debugLog("========== AIService 开始识别 ==========")
+        debugLog("图片尺寸: \(image.size)")
+
+        // 使用 SiliconFlow API 进行智能识别
+        SiliconFlowService.shared.recognizeImage(image) { [weak self] result in
+            guard let self = self else { return }
+
+            DispatchQueue.main.async {
+                self.isProcessing = false
+
+                switch result {
+                case .success(let intelligentResult):
+                    debugLog("✅ SiliconFlow API 识别成功")
+                    debugLog("类型: \(intelligentResult.type.rawValue)")
+
+                    // 转换为 AIRecognitionResult
+                    let aiResult = self.convertToAIRecognitionResult(intelligentResult, image: image)
+
+                    // 保存记录
+                    self.saveRecognition(image: image, result: aiResult)
+
+                    self.lastResult = aiResult
+                    self.fetchHistory()
+                    completion(aiResult)
+
+                case .failure(let error):
+                    debugLog("❌ SiliconFlow API 失败: \(error.localizedDescription)")
+                    debugLog("回退到本地 OCR...")
+                    self.lastError = "AI识别失败: \(error.localizedDescription)"
+
+                    // 回退到本地 OCR
+                    self.performLocalRecognition(image: image, completion: completion)
+                }
+            }
+        }
+    }
+
+    // MARK: - 本地识别（备用）
+
+    private func performLocalRecognition(image: UIImage, completion: @escaping (AIRecognitionResult?) -> Void) {
+        performLocalOCR(on: image) { [weak self] recognizedText in
+            guard let self = self else { return }
+
             guard let text = recognizedText, !text.isEmpty else {
                 DispatchQueue.main.async {
                     self.isProcessing = false
@@ -58,13 +100,13 @@ class AIService: ObservableObject {
                 }
                 return
             }
-            
+
             // 分析文本类型和内容
             let result = self.analyzeRecognizedText(text)
-            
+
             // 保存记录
             self.saveRecognition(image: image, result: result)
-            
+
             DispatchQueue.main.async {
                 self.isProcessing = false
                 self.lastResult = result
@@ -73,115 +115,92 @@ class AIService: ObservableObject {
             }
         }
     }
-    
-    func recognizeWithOpenAI(_ image: UIImage, completion: @escaping (AIRecognitionResult?) -> Void) {
-        guard let apiKey = openAIAPIKey, !apiKey.isEmpty else {
-            // 如果没有配置 OpenAI API Key，回退到本地识别
-            recognizeImage(image, completion: completion)
-            return
+
+    // MARK: - 转换结果
+
+    private func convertToAIRecognitionResult(_ intelligentResult: IntelligentRecognitionResult, image: UIImage) -> AIRecognitionResult {
+        let type: AIRecognitionType
+        switch intelligentResult.type {
+        case .account:
+            type = .receipt
+        case .todo:
+            type = .todo
+        case .unknown:
+            type = .unknown
         }
-        
-        isProcessing = true
-        
-        // 将图片转换为 base64
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            isProcessing = false
-            completion(nil)
-            return
+
+        var extractedData: ExtractedData?
+
+        if let accountData = intelligentResult.accountData {
+            let category = mapCategoryString(accountData.category)
+            extractedData = ExtractedData(
+                amount: accountData.amount,
+                category: category,
+                title: nil,
+                dueDate: nil,
+                merchant: accountData.merchant,
+                items: nil
+            )
+        } else if let todoData = intelligentResult.todoData {
+            extractedData = ExtractedData(
+                amount: nil,
+                category: nil,
+                title: todoData.title,
+                dueDate: todoData.dueDate,
+                merchant: nil,
+                items: nil
+            )
         }
-        let base64Image = imageData.base64EncodedString()
-        
-        // 构建 OpenAI Vision API 请求
-        let requestBody: [String: Any] = [
-            "model": "gpt-4o-mini",
-            "messages": [
-                [
-                    "role": "system",
-                    "content": "You are an AI assistant that analyzes images to extract structured data. Identify if the image is a receipt/invoice or contains task/todo information. Return JSON with fields: type ('receipt' or 'todo'), amount (number), category (string), title (string), dueDate (ISO string or null), merchant (string), items (array of strings)."
-                ],
-                [
-                    "role": "user",
-                    "content": [
-                        [
-                            "type": "image_url",
-                            "image_url": [
-                                "url": "data:image/jpeg;base64,\(base64Image)"
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            "max_tokens": 500,
-            "response_format": ["type": "json_object"]
-        ]
-        
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            isProcessing = false
-            completion(nil)
-            return
-        }
-        
-        var request = URLRequest(url: URL(string: "https://api.openai.com/v1/chat/completions")!)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                self.isProcessing = false
-                
-                guard let data = data,
-                      let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let choices = json["choices"] as? [[String: Any]],
-                      let firstChoice = choices.first,
-                      let message = firstChoice["message"] as? [String: Any],
-                      let content = message["content"] as? String else {
-                    completion(nil)
-                    return
-                }
-                
-                // 解析返回的 JSON
-                if let resultData = content.data(using: .utf8),
-                   let parsedJSON = try? JSONSerialization.jsonObject(with: resultData) as? [String: Any] {
-                    let result = self.parseOpenAIResponse(parsedJSON, originalText: content)
-                    self.saveRecognition(image: image, result: result)
-                    self.lastResult = result
-                    self.fetchHistory()
-                    completion(result)
-                } else {
-                    completion(nil)
-                }
-            }
-        }.resume()
+
+        return AIRecognitionResult(
+            type: type,
+            text: intelligentResult.rawText,
+            extractedData: extractedData,
+            confidence: intelligentResult.confidence
+        )
     }
-    
-    // MARK: - Local OCR with Vision
-    
+
+    private func mapCategoryString(_ category: String) -> AccountCategory {
+        let categoryMap: [String: AccountCategory] = [
+            "餐饮": .food,
+            "交通": .transport,
+            "购物": .shopping,
+            "娱乐": .entertainment,
+            "住房": .housing,
+            "医疗": .medical,
+            "教育": .education,
+            "工资": .salary,
+            "投资": .investment
+        ]
+        return categoryMap[category] ?? .other
+    }
+
+    // MARK: - Local OCR (Fallback)
+
     private func performLocalOCR(on image: UIImage, completion: @escaping (String?) -> Void) {
         guard let cgImage = image.cgImage else {
             completion(nil)
             return
         }
-        
+
         let requestHandler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         let request = VNRecognizeTextRequest { request, error in
             guard let observations = request.results as? [VNRecognizedTextObservation] else {
                 completion(nil)
                 return
             }
-            
+
             let recognizedStrings = observations.compactMap { observation in
                 observation.topCandidates(1).first?.string
             }
-            
+
             completion(recognizedStrings.joined(separator: "\n"))
         }
-        
+
         request.recognitionLevel = .accurate
         request.usesLanguageCorrection = true
         request.recognitionLanguages = ["zh-Hans", "en-US"]
-        
+
         do {
             try requestHandler.perform([request])
         } catch {
@@ -189,24 +208,23 @@ class AIService: ObservableObject {
             completion(nil)
         }
     }
-    
-    // MARK: - Text Analysis
-    
+
+    // MARK: - Text Analysis (Local Fallback)
+
     private func analyzeRecognizedText(_ text: String) -> AIRecognitionResult {
         let lowercased = text.lowercased()
-        
-        // 判断类型
+
         var type: AIRecognitionType = .unknown
         var confidence: Double = 0.5
-        
+
         // 收据特征词
         let receiptKeywords = ["发票", "收据", "小票", "金额", "总计", "合计", "total", "amount", "¥", "$", "元", "invoice", "receipt"]
         // 待办特征词
         let todoKeywords = ["任务", "待办", "todo", "task", "截止", "ddl", "deadline", "提醒", "完成", "checklist"]
-        
+
         let receiptScore = receiptKeywords.filter { lowercased.contains($0) }.count
         let todoScore = todoKeywords.filter { lowercased.contains($0) }.count
-        
+
         if receiptScore > todoScore && receiptScore > 0 {
             type = .receipt
             confidence = min(0.5 + Double(receiptScore) * 0.1, 0.95)
@@ -214,10 +232,9 @@ class AIService: ObservableObject {
             type = .todo
             confidence = min(0.5 + Double(todoScore) * 0.1, 0.95)
         }
-        
-        // 提取数据
+
         let extractedData = extractData(from: text, type: type)
-        
+
         return AIRecognitionResult(
             type: type,
             text: text,
@@ -225,7 +242,7 @@ class AIService: ObservableObject {
             confidence: confidence
         )
     }
-    
+
     private func extractData(from text: String, type: AIRecognitionType) -> ExtractedData {
         var amount: Double?
         var category: AccountCategory?
@@ -233,7 +250,7 @@ class AIService: ObservableObject {
         var dueDate: Date?
         var merchant: String?
         var items: [String]?
-        
+
         // 提取金额（支持 ¥100.00、100元、$100 等格式）
         let amountPattern = #"[¥$￥]\s*(\d+(?:\.\d{1,2})?)|(\d+(?:\.\d{1,2})?)\s*[元¥$]"#
         if let regex = try? NSRegularExpression(pattern: amountPattern, options: []),
@@ -243,17 +260,17 @@ class AIService: ObservableObject {
                 amount = Double(text[swiftRange])
             }
         }
-        
+
         // 根据内容推断分类
         if type == .receipt {
             category = inferCategory(from: text)
-            
+
             // 尝试提取商家名称（通常是第一行或包含特定关键词的行）
             let lines = text.components(separatedBy: .newlines)
             merchant = lines.first { line in
                 !line.isEmpty && !line.contains("¥") && !line.contains("$") && !line.contains("元")
             }
-            
+
             // 提取商品列表
             items = lines.filter { line in
                 let lowercased = line.lowercased()
@@ -263,11 +280,11 @@ class AIService: ObservableObject {
             // 提取标题（通常是第一行或包含"任务"、"todo"等的行）
             let lines = text.components(separatedBy: .newlines)
             title = lines.first { !$0.isEmpty }
-            
+
             // 提取日期
             dueDate = extractDate(from: text)
         }
-        
+
         return ExtractedData(
             amount: amount,
             category: category,
@@ -277,10 +294,10 @@ class AIService: ObservableObject {
             items: items
         )
     }
-    
+
     private func inferCategory(from text: String) -> AccountCategory? {
         let lowercased = text.lowercased()
-        
+
         if lowercased.contains("餐厅") || lowercased.contains("餐饮") || lowercased.contains("food") || lowercased.contains("restaurant") {
             return .food
         } else if lowercased.contains("交通") || lowercased.contains("地铁") || lowercased.contains("公交") || lowercased.contains("transport") {
@@ -292,10 +309,10 @@ class AIService: ObservableObject {
         } else if lowercased.contains("医疗") || lowercased.contains("医院") || lowercased.contains("medical") {
             return .medical
         }
-        
+
         return nil
     }
-    
+
     private func extractDate(from text: String) -> Date? {
         let patternFormats: [(pattern: String, formats: [String], needsCurrentYear: Bool)] = [
             (#"(\d{4})[-/](\d{1,2})[-/](\d{1,2})"#, ["yyyy-M-d", "yyyy/MM/dd", "yyyy-MM-dd"], false),
@@ -331,48 +348,19 @@ class AIService: ObservableObject {
                 }
             }
         }
-        
+
         return nil
     }
-    
-    private func parseOpenAIResponse(_ json: [String: Any], originalText: String) -> AIRecognitionResult {
-        let type = AIRecognitionType(rawValue: json["type"] as? String ?? "unknown") ?? .unknown
-        
-        let amount = (json["amount"] as? NSNumber)?.doubleValue
-        let categoryString = json["category"] as? String
-        let category = categoryString.flatMap { AccountCategory(rawValue: $0) }
-        let title = json["title"] as? String
-        let dueDateString = json["dueDate"] as? String
-        let dueDate = dueDateString.flatMap { ISO8601DateFormatter().date(from: $0) }
-        let merchant = json["merchant"] as? String
-        let items = json["items"] as? [String]
-        
-        let extractedData = ExtractedData(
-            amount: amount,
-            category: category,
-            title: title,
-            dueDate: dueDate,
-            merchant: merchant,
-            items: items
-        )
-        
-        return AIRecognitionResult(
-            type: type,
-            text: originalText,
-            extractedData: extractedData,
-            confidence: 0.9
-        )
-    }
-    
+
     // MARK: - History Management
-    
+
     private func saveRecognition(image: UIImage, result: AIRecognitionResult) {
         let entity = AIRecognitionRecordEntity(context: viewContext)
         entity.id = UUID()
         entity.imageData = image.jpegData(compressionQuality: 0.7)
         entity.recognizedText = result.text
         entity.category = result.type.rawValue
-        
+
         if let data = result.extractedData {
             let dict: [String: Any] = [
                 "amount": data.amount as Any,
@@ -382,23 +370,26 @@ class AIService: ObservableObject {
                 "merchant": data.merchant as Any,
                 "items": data.items as Any
             ]
-            entity.extractedData = try? JSONSerialization.data(withJSONObject: dict)
+            if let jsonData = try? JSONSerialization.data(withJSONObject: dict),
+               let jsonString = String(data: jsonData, encoding: .utf8) {
+                entity.extractedData = jsonString
+            }
         }
-        
+
         entity.createdAt = Date()
-        
+
         do {
             try viewContext.save()
         } catch {
             print("Error saving recognition: \(error)")
         }
     }
-    
+
     func fetchHistory() {
         let request: NSFetchRequest<AIRecognitionRecordEntity> = AIRecognitionRecordEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AIRecognitionRecordEntity.createdAt, ascending: false)]
         request.fetchLimit = 50
-        
+
         do {
             let entities = try viewContext.fetch(request)
             recognitionHistory = entities.map { entity in
@@ -414,11 +405,11 @@ class AIService: ObservableObject {
             print("Error fetching history: \(error)")
         }
     }
-    
+
     func deleteRecord(_ record: AIRecognitionRecord) {
         let request: NSFetchRequest<AIRecognitionRecordEntity> = AIRecognitionRecordEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", record.id as CVarArg)
-        
+
         do {
             let results = try viewContext.fetch(request)
             if let entity = results.first {
@@ -440,7 +431,7 @@ struct AIRecognitionRecord: Identifiable {
     let recognizedText: String
     let category: AIRecognitionType
     let createdAt: Date
-    
+
     var image: UIImage? {
         guard let data = imageData else { return nil }
         return UIImage(data: data)
