@@ -84,12 +84,12 @@ class AIService: ObservableObject {
         isProcessing = true
         
         // 将图片转换为 base64
-        guard let imageData = image.jpegData(compressionQuality: 0.8),
-              let base64Image = imageData.base64EncodedString() else {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             isProcessing = false
             completion(nil)
             return
         }
+        let base64Image = imageData.base64EncodedString()
         
         // 构建 OpenAI Vision API 请求
         let requestBody: [String: Any] = [
@@ -297,32 +297,37 @@ class AIService: ObservableObject {
     }
     
     private func extractDate(from text: String) -> Date? {
-        let datePatterns = [
-            #"(\d{4})[-/](\d{1,2})[-/](\d{1,2})"#,  // 2024-01-15
-            #"(\d{1,2})[-/](\d{1,2})[-/](\d{4})"#,  // 15/01/2024
-            #"(\d{1,2})月(\d{1,2})日"#               // 1月15日
+        let patternFormats: [(pattern: String, formats: [String], needsCurrentYear: Bool)] = [
+            (#"(\d{4})[-/](\d{1,2})[-/](\d{1,2})"#, ["yyyy-M-d", "yyyy/MM/dd", "yyyy-MM-dd"], false),
+            (#"(\d{1,2})[-/](\d{1,2})[-/](\d{4})"#, ["d/M/yyyy", "dd/MM/yyyy", "d-M-yyyy", "dd-MM-yyyy"], false),
+            (#"(\d{1,2})月(\d{1,2})日"#, ["M月d日", "MM月dd日"], true)
         ]
-        
+
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "zh_CN")
-        
-        for pattern in datePatterns {
-            if let regex = try? NSRegularExpression(pattern: pattern, options: []),
-               let match = regex.firstMatch(in: text, options: [], range: NSRange(location: 0, length: text.utf16.count)) {
-                let matchedString = (text as NSString).substring(with: match.range)
-                
-                if matchedString.contains("月") {
-                    formatter.dateFormat = "M月d日"
-                } else if matchedString.contains("/") || matchedString.contains("-") {
-                    if matchedString.count > 8 {
-                        formatter.dateFormat = "yyyy-MM-dd"
-                    } else {
-                        formatter.dateFormat = "dd/MM/yyyy"
+
+        for item in patternFormats {
+            guard let regex = try? NSRegularExpression(pattern: item.pattern, options: []),
+                  let match = regex.firstMatch(in: text, options: [], range: NSRange(location: 0, length: text.utf16.count)) else {
+                continue
+            }
+
+            let matchedString = (text as NSString).substring(with: match.range)
+            for format in item.formats {
+                formatter.dateFormat = format
+                if let parsedDate = formatter.date(from: matchedString) {
+                    if item.needsCurrentYear {
+                        let calendar = Calendar.current
+                        let currentYear = calendar.component(.year, from: Date())
+                        let month = calendar.component(.month, from: parsedDate)
+                        let day = calendar.component(.day, from: parsedDate)
+                        var components = DateComponents()
+                        components.year = currentYear
+                        components.month = month
+                        components.day = day
+                        return calendar.date(from: components)
                     }
-                }
-                
-                if let date = formatter.date(from: matchedString) {
-                    return date
+                    return parsedDate
                 }
             }
         }

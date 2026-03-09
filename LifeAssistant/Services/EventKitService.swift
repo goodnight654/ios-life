@@ -8,8 +8,10 @@ import EventKit
 import SwiftUI
 
 class EventKitService: ObservableObject {
-    @Published var authorizationStatus: EKAuthorizationStatus = .notDetermined
-    @Published var isAuthorized = false
+    @Published var reminderAuthorizationStatus: EKAuthorizationStatus = .notDetermined
+    @Published var eventAuthorizationStatus: EKAuthorizationStatus = .notDetermined
+    @Published var isReminderAuthorized = false
+    @Published var isEventAuthorized = false
     
     private let eventStore = EKEventStore()
     
@@ -20,11 +22,13 @@ class EventKitService: ObservableObject {
     // MARK: - Authorization
     
     func checkAuthorizationStatus() {
-        authorizationStatus = EKEventStore.authorizationStatus(for: .reminder)
-        isAuthorized = authorizationStatus == .fullAccess
+        reminderAuthorizationStatus = EKEventStore.authorizationStatus(for: .reminder)
+        eventAuthorizationStatus = EKEventStore.authorizationStatus(for: .event)
+        isReminderAuthorized = reminderAuthorizationStatus == .fullAccess
+        isEventAuthorized = eventAuthorizationStatus == .fullAccess
     }
     
-    func requestAuthorization(completion: @escaping (Bool) -> Void = { _ in }) {
+    func requestReminderAuthorization(completion: @escaping (Bool) -> Void = { _ in }) {
         eventStore.requestFullAccessToReminders { [weak self] granted, error in
             DispatchQueue.main.async {
                 self?.checkAuthorizationStatus()
@@ -32,11 +36,25 @@ class EventKitService: ObservableObject {
             }
         }
     }
+
+    func requestEventAuthorization(completion: @escaping (Bool) -> Void = { _ in }) {
+        eventStore.requestFullAccessToEvents { [weak self] granted, error in
+            DispatchQueue.main.async {
+                self?.checkAuthorizationStatus()
+                completion(granted)
+            }
+        }
+    }
+
+    // 兼容旧调用
+    func requestAuthorization(completion: @escaping (Bool) -> Void = { _ in }) {
+        requestReminderAuthorization(completion: completion)
+    }
     
     // MARK: - Reminder Operations
     
     func createReminder(title: String, notes: String? = nil, dueDate: Date? = nil, priority: EKReminderPriority = .none) -> String? {
-        guard isAuthorized else { return nil }
+        guard isReminderAuthorized else { return nil }
         
         let reminder = EKReminder(eventStore: eventStore)
         reminder.title = title
@@ -63,7 +81,7 @@ class EventKitService: ObservableObject {
     }
     
     func updateReminder(identifier: String, title: String? = nil, notes: String? = nil, dueDate: Date? = nil, isCompleted: Bool? = nil) {
-        guard isAuthorized,
+        guard isReminderAuthorized,
               let reminder = eventStore.calendarItem(withIdentifier: identifier) as? EKReminder else {
             return
         }
@@ -89,7 +107,7 @@ class EventKitService: ObservableObject {
     }
     
     func deleteReminder(identifier: String) {
-        guard isAuthorized,
+        guard isReminderAuthorized,
               let reminder = eventStore.calendarItem(withIdentifier: identifier) as? EKReminder else {
             return
         }
@@ -102,14 +120,14 @@ class EventKitService: ObservableObject {
     }
     
     func getReminder(identifier: String) -> EKReminder? {
-        guard isAuthorized else { return nil }
+        guard isReminderAuthorized else { return nil }
         return eventStore.calendarItem(withIdentifier: identifier) as? EKReminder
     }
     
     // MARK: - Calendar Operations
     
     func createCalendarEvent(title: String, notes: String? = nil, startDate: Date, endDate: Date, location: String? = nil, isAllDay: Bool = false) -> String? {
-        guard isAuthorized else { return nil }
+        guard isEventAuthorized else { return nil }
         
         let event = EKEvent(eventStore: eventStore)
         event.title = title
@@ -136,13 +154,14 @@ class EventKitService: ObservableObject {
     // MARK: - Batch Operations
     
     func syncTodosToReminders(todos: [TodoItem], completion: @escaping ([UUID: String]) -> Void) {
-        guard isAuthorized else {
+        guard isReminderAuthorized else {
             completion([:])
             return
         }
         
         var syncedIDs: [UUID: String] = [:]
         let group = DispatchGroup()
+        let syncQueue = DispatchQueue(label: "EventKitService.syncTodosToReminders.queue")
         
         for todo in todos where todo.reminderID == nil && todo.dueDate != nil {
             group.enter()
@@ -153,14 +172,21 @@ class EventKitService: ObservableObject {
                     notes: todo.notes,
                     dueDate: todo.dueDate
                 ) {
-                    syncedIDs[todo.id] = reminderID
+                    syncQueue.sync {
+                        syncedIDs[todo.id] = reminderID
+                    }
                 }
                 group.leave()
             }
         }
         
         group.notify(queue: .main) {
-            completion(syncedIDs)
+            syncQueue.sync {
+                let result = syncedIDs
+                DispatchQueue.main.async {
+                    completion(result)
+                }
+            }
         }
     }
     
