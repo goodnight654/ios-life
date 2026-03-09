@@ -4,15 +4,16 @@
 //
 
 import CoreData
-import CloudKit
 
 struct PersistenceController {
     static let shared = PersistenceController()
 
-    let container: NSPersistentCloudKitContainer
+    let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
-        container = NSPersistentCloudKitContainer(name: "LifeAssistant")
+        // 使用 NSPersistentContainer 而不是 NSPersistentCloudKitContainer
+        // 个人开发者账户不支持 iCloud
+        container = NSPersistentContainer(name: "LifeAssistant")
 
         guard let description = container.persistentStoreDescriptions.first else {
             fatalError("Failed to get persistent store description")
@@ -24,10 +25,6 @@ struct PersistenceController {
             description.url = storeURL
             debugLog("CoreData 存储路径: \(storeURL.path)")
         }
-
-        // 启用 CloudKit 同步
-        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-        description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
         if inMemory {
             description.url = URL(fileURLWithPath: "/dev/null")

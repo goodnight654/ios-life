@@ -33,6 +33,7 @@
 		000000070000000000000002 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0000000700000000000000F2 /* Assets.xcassets */; };
 		000000080000000000000001 /* RecognizeImageIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000800000000000000F1 /* RecognizeImageIntent.swift */; };
 		000000080000000000000002 /* LifeAssistantShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000800000000000000F2 /* LifeAssistantShortcuts.swift */; };
+		000000080000000000000003 /* ScreenshotRecognitionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000800000000000000F3 /* ScreenshotRecognitionIntent.swift */; };
 		000000050000000000000007 /* SiliconFlowService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000500000000000000F7 /* SiliconFlowService.swift */; };
 		000000030000000000000007 /* RecognitionPreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000300000000000000F7 /* RecognitionPreviewSheet.swift */; };
 		000000020000000000000005 /* ProgressGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000200000000000000F5 /* ProgressGoal.swift */; };
@@ -69,6 +70,7 @@
 		0000000700000000000000F4 /* LifeAssistant.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = LifeAssistant.xcdatamodel; sourceTree = "<group>"; };
 		0000000800000000000000F1 /* RecognizeImageIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizeImageIntent.swift; sourceTree = "<group>"; };
 		0000000800000000000000F2 /* LifeAssistantShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeAssistantShortcuts.swift; sourceTree = "<group>"; };
+		0000000800000000000000F3 /* ScreenshotRecognitionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotRecognitionIntent.swift; sourceTree = "<group>"; };
 		0000000500000000000000F7 /* SiliconFlowService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiliconFlowService.swift; sourceTree = "<group>"; };
 		0000000300000000000000F7 /* RecognitionPreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognitionPreviewSheet.swift; sourceTree = "<group>"; };
 		0000000200000000000000F5 /* ProgressGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressGoal.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 			children = (
 				0000000800000000000000F1 /* RecognizeImageIntent.swift */,
 				0000000800000000000000F2 /* LifeAssistantShortcuts.swift */,
+				0000000800000000000000F3 /* ScreenshotRecognitionIntent.swift */,
 			);
 			path = Intents;
 			sourceTree = "<group>";
@@ -361,6 +364,7 @@
 				000000070000000000000001 /* LifeAssistant.xcdatamodeld in Sources */,
 				000000080000000000000001 /* RecognizeImageIntent.swift in Sources */,
 				000000080000000000000002 /* LifeAssistantShortcuts.swift in Sources */,
+				000000080000000000000003 /* ScreenshotRecognitionIntent.swift in Sources */,
 				000000050000000000000007 /* SiliconFlowService.swift in Sources */,
 				000000030000000000000007 /* RecognitionPreviewSheet.swift in Sources */,
 				000000020000000000000005 /* ProgressGoal.swift in Sources */,

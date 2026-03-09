@@ -10,38 +10,49 @@ struct LifeAssistantShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         get {
             return [
-                // 识别截图快捷指令
+                // 截图识别 - 主快捷指令
                 AppShortcut(
-                    intent: RecognizeScreenshotIntent(),
+                    intent: ScreenshotRecognitionIntent(),
                     phrases: [
                         "识别截图用\(.applicationName)",
                         "用\(.applicationName)识别图片",
-                        "\(.applicationName)识别截图",
+                        "\(.applicationName)截图识别",
                         "截图识别\(.applicationName)"
                     ],
-                    shortTitle: "识别截图",
+                    shortTitle: "截图识别",
                     systemImageName: "doc.text.viewfinder"
                 ),
 
-                // 从图片快速添加快捷指令
+                // 快速记账
                 AppShortcut(
-                    intent: QuickAddFromImageIntent(),
+                    intent: QuickAddAccountIntent(),
                     phrases: [
-                        "用\(.applicationName)从图片添加",
-                        "\(.applicationName)图片快速添加",
-                        "用\(.applicationName)识别并保存"
+                        "用\(.applicationName)快速记账",
+                        "\(.applicationName)记账",
+                        "截图记账\(.applicationName)"
                     ],
-                    shortTitle: "从图片快速添加",
-                    systemImageName: "plus.square.on.square"
+                    shortTitle: "快速记账",
+                    systemImageName: "yensign.circle"
                 ),
 
-                // 打开AI识图快捷指令
+                // 快速待办
+                AppShortcut(
+                    intent: QuickAddTodoIntent(),
+                    phrases: [
+                        "用\(.applicationName)快速待办",
+                        "\(.applicationName)待办",
+                        "截图待办\(.applicationName)"
+                    ],
+                    shortTitle: "快速待办",
+                    systemImageName: "checklist"
+                ),
+
+                // 打开AI识图
                 AppShortcut(
                     intent: OpenAIRecognitionIntent(),
                     phrases: [
                         "打开\(.applicationName)识图",
-                        "\(.applicationName)AI识图",
-                        "用\(.applicationName)拍照识别"
+                        "\(.applicationName)AI识图"
                     ],
                     shortTitle: "打开AI识图",
                     systemImageName: "camera.viewfinder"
@@ -55,12 +66,11 @@ struct LifeAssistantShortcuts: AppShortcutsProvider {
 @available(iOS 16.0, *)
 struct OpenAIRecognitionIntent: AppIntent {
     static var title: LocalizedStringResource = "打开AI识图"
-    static var description: IntentDescription = IntentDescription("打开生活助手的AI识图功能，可以拍照或选择图片进行识别")
+    static var description: IntentDescription = IntentDescription("打开生活助手的AI识图功能")
     static var openAppWhenRun: Bool = true
 
     @MainActor
     func perform() async throws -> some IntentResult {
-        // 发送通知让App切换到AI识图tab
         NotificationCenter.default.post(name: Notification.Name("OpenAIRecognitionTab"), object: nil)
         return .result()
     }

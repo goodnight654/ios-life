@@ -87,14 +87,6 @@
     <key>NSSiriUsageDescription</key>
     <string>需要使用Siri来快速添加记账、待办等记录</string>
 
-    <!-- Siri权限 -->
-    <key>NSSiriUsageDescription</key>
-    <string>需要使用Siri来快速添加记账、待办等记录</string>
-
-    <!-- CloudKit配置 -->
-    <key>CKContainerIdentifier</key>
-    <string>iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-
     <!-- 后台模式 -->
     <key>UIBackgroundModes</key>
     <array>
